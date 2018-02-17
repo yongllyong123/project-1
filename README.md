@@ -1,4 +1,6 @@
 # project-1
 
 ## Team Members:
- & Dan Lynch
+ Yong Zhao & Dan Lynch
+
+

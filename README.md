@@ -5,7 +5,7 @@ Yong Zhao & Dan Lynch
 
 ## Introduction and Project Scope
 This project is a prototype for a Internet-of-Things system for detecting if a curbside parking space is occupied.
-* The system uses a pair of distance sensors and a microcontroller with WiFi capability to stream measured distances to a web page, potentially served up using the LAMP stack.
+* The system uses a pair of distance sensors and a microcontroller with WiFi capability to stream measured distances to a web page, potentially served up using the LAMP stack or Node.js.
 * The web page periodically compares the measured distances to thresholds that approximate the size of a car.
 * If both thresholds are satisfied, the web page starts a timer.
 * Once the timer reaches a certain value, the web page notifies the end user, via a smartphone app, that a car is parked in the corresponding parking space.

@@ -44,6 +44,9 @@ const char myPSK[] = "";
 // and loop()).
 ESP8266Server server = ESP8266Server(80);
 
+// Global variable for ESP8266 MAC address:
+char myMacAddr[10];
+
 //////////////////
 // HTTP Strings //
 //////////////////
@@ -78,6 +81,14 @@ void setup()
   // displayConnectInfo prints the Shield's local IP
   // and the network it's connected to.
   displayConnectInfo();
+
+  int rc = esp8266.localMAC(myMacAddr);
+  Serial.print("My MAC address is: [");
+  char i = 0;
+  for (i = 0; i<10; i++) {
+    Serial.print(myMacAddr[i]);
+  }
+  Serial.println("]");
 
   serialTrigger(F("Press any key to connect client."));
   clientDemo();

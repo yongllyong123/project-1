@@ -35,7 +35,7 @@ const int TRIG_PIN1 = 6;
 const int ECHO_PIN1 = 7;
 const unsigned int MAX_DIST = 23200; // Anything over 400 cm (23200 us pulse) is "out of range"
 int count=0; // 计数
-int empty=0; //判断车位为空
+int empty=1; //判断车位为空
 unsigned long t1;
 unsigned long t2;
 unsigned long pulse_width;
@@ -74,44 +74,45 @@ float HC_read() {
 
   // Print out results
   if ( pulse_width > MAX_DIST ) {
-    Serial.print("1 Out of range          ");
+//    Serial.print("1 Out of range          ");
   } else {
-    Serial.print("sensor1: ");
-    Serial.print(centimeters);
-    Serial.println(" cm \t");
+//    Serial.print("sensor1: ");
+//    Serial.print(centimeters);
+//    Serial.println(" cm \t");
   }
 
   return centimeters;
 }
 
 // Vehicle detection algorithm:
-void vehicle_detect(void) {
+String vehicle_detect() {
 if( empty == 1 ) { //parking spot is not used
     if( requirement( cm ) == 1 ) {// meeting the requirement
       count++;//计数
       if( count == 11 ) {
-//        Serial.println(" the car is arrived");//send a signal for parking
+        return " the car is arrived ";//send a signal for parking
         count = 0;
         empty = 0; //parking spot is used
       } else {
-
+       return " the car is not arrived yet (has detected) ";
       }
     } else {
       count = 0;
-
+      return " the car is not arrived yet ";
     }
   } else { //parking spot is used
     if ( requirement( cm ) == 0 ) {
       count++;
       if( count == 6){
-//        Serial.println(" the car is leaving");//send a signal for removing
+        return " the car is leaving ";//send a signal for removing
         count = 0;
         empty = 1;
       } else {
-
+        return " the car is not leaving yet (has detected) ";
       }
     } else {
       count = 0;
+      return " the car is not leaving yet ";
     }
   }
 }
@@ -352,18 +353,12 @@ void serverDemo()
           String htmlBody;
           
           cm = HC_read();
-//          vehicle_detect();
           
           htmlBody += "cm: ";
           htmlBody += String(cm);
           htmlBody += "<br>\n";
-          htmlBody += "empty: ";
-          htmlBody += String(empty);
-//          if (empty == 1) {
-//            htmlBody += "1";
-//          } else {
-//            htmlBody += "0";
-//          }
+          //htmlBody += "empty: ";
+          //htmlBody += vehicle_detect();
           htmlBody += "<br>\n";
           htmlBody += "</html>\n";
           client.print(htmlBody);

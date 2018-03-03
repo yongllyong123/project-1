@@ -33,7 +33,7 @@ Distributed as-is; no warranty is given.
 //////////////////////////////
 // Replace these two character strings with the name and
 // password of your WiFi network.
-const char mySSID[] = "";
+const char mySSID[] = "Device-Northwestern";
 const char myPSK[] = "";
 
 //////////////////////////////
@@ -75,20 +75,21 @@ void setup()
   // shield, and sets it up.
   initializeESP8266();
 
+  // Display MAC address:
+  int rc = esp8266.localMAC(myMacAddr);
+  Serial.print("My MAC address is: [");
+  char i = 0;
+  for(i = 0; i<17; i++) {
+    Serial.print(myMacAddr[i]);
+    }
+  Serial.println("]");
+
   // connectESP8266() connects to the defined WiFi network.
   connectESP8266();
 
   // displayConnectInfo prints the Shield's local IP
   // and the network it's connected to.
   displayConnectInfo();
-
-  int rc = esp8266.localMAC(myMacAddr);
-  Serial.print("My MAC address is: [");
-  char i = 0;
-  for (i = 0; i<10; i++) {
-    Serial.print(myMacAddr[i]);
-  }
-  Serial.println("]");
 
   serialTrigger(F("Press any key to connect client."));
   clientDemo();

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
 //                    Document doc = Jsoup.connect("http://www.ssaurel.com/blog").get();
-                    Document doc = Jsoup.connect("http://10.105.176.164:8080").get();
+                    Document doc = Jsoup.connect("http://10.106.19.249").get();
                     String title = doc.title();
                     Elements links = doc.select("body");
 

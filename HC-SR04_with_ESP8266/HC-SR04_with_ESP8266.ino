@@ -51,7 +51,7 @@ boolean requirement( float centimeters ) {
 }
 
 // HC-SR04 read:
-float HC_read() {
+float HC_read(void) {
   float centimeters = 0;
   // Hold the trigger pin high for at least 10 us
   digitalWrite(TRIG_PIN1, HIGH);
@@ -123,6 +123,7 @@ if( empty == 1 ) { //parking spot is not used
 // Replace these two character strings with the name and
 // password of your WiFi network.
 const char mySSID[] = "Device-Northwestern";
+//const char mySSID[] = "";
 const char myPSK[] = "";
 
 //////////////////////////////
@@ -134,7 +135,7 @@ const char myPSK[] = "";
 ESP8266Server server = ESP8266Server(80);
 
 // Global variable for ESP8266 MAC address:
-char myMacAddr[10];
+char myMacAddr[20];
 
 //////////////////
 // HTTP Strings //
@@ -330,7 +331,8 @@ void serverDemo()
   // available() has one parameter -- a timeout value. This
   // is the number of milliseconds the function waits,
   // checking for a connection.
-  ESP8266Client client = server.available(500);
+  int server_timeout = 500;
+  ESP8266Client client = server.available(server_timeout);
 
   if (client)
   {
@@ -352,7 +354,7 @@ void serverDemo()
           client.print(htmlHeader);
           String htmlBody;
           
-          cm = HC_read();
+//          cm = HC_read();
           
           htmlBody += "cm: ";
           htmlBody += String(cm);
@@ -362,6 +364,7 @@ void serverDemo()
           htmlBody += "<br>\n";
           htmlBody += "</html>\n";
           client.print(htmlBody);
+          cm++;
           break;
         }
         if (c == '\n')

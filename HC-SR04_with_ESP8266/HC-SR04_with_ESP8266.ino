@@ -164,7 +164,8 @@ void setup()
   pinMode(TRIG_PIN1, OUTPUT);
   digitalWrite(TRIG_PIN1, LOW);
   
-  serialTrigger(F("Press any key to begin."));
+//  serialTrigger(F("Press any key to begin."));
+  delay(1000);
 
   // initializeESP8266() verifies communication with the WiFi
   // shield, and sets it up.
@@ -186,16 +187,20 @@ void setup()
   // and the network it's connected to.
   displayConnectInfo();
 
-  serialTrigger(F("Press any key to connect client."));
+//  serialTrigger(F("Press any key to connect client."));
+  delay(1000);
   clientDemo();
 
-  serialTrigger(F("Press any key to test server."));
+//  serialTrigger(F("Press any key to test server."));
+  delay(1000);
   serverSetup();
 }
 
 void loop()
 {
+  cm = HC_read();
   serverDemo();
+  delay(1000);
 }
 
 void initializeESP8266()
@@ -364,7 +369,7 @@ void serverDemo()
           htmlBody += "<br>\n";
           htmlBody += "</html>\n";
           client.print(htmlBody);
-          cm++;
+//          cm++;
           break;
         }
         if (c == '\n')
@@ -386,9 +391,6 @@ void serverDemo()
     client.stop();
     Serial.println(F("Client disconnected"));
   }
-
-  delay(1000);
-
 }
 
 // errorLoop prints an error code, then loops forever.

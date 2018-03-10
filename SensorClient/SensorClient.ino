@@ -82,21 +82,19 @@ float HC_read(void) {
 }
 
 // Vehicle detection algorithm:
-String vehicle_detect() {
+void vehicle_detect() {
 if( empty == 1 ) { //parking spot is not used
     if( requirement( cm ) == 1 ) {// meeting the requirement
       count++;//计数
       if( count == 6 ) {
         count = 0;
-        empty = 0;
-        return "the car is arrived ";//send a signal for parking
-         //parking spot is used
+        empty = 0; // parking spot in use
       } else {
-       return "the car is not arrived yet (has detected) ";
+       empty = 1;
       }
     } else {
       count = 0;
-      return "the car is not arrived yet ";
+      empty = 1;
     }
   } else { //parking spot is used
     if ( requirement( cm ) == 0 ) {
@@ -104,13 +102,12 @@ if( empty == 1 ) { //parking spot is not used
       if( count == 6){
         count = 0;
         empty = 1;
-        return "the car is leaving ";//send a signal for removing
       } else {
-        return "the car is not leaving yet (has detected) ";
+        empty = 0;
       }
     } else {
       count = 0;
-      return "the car is not leaving yet ";
+      empty = 0;
     }
   }
 }
@@ -198,8 +195,8 @@ void loop()
 {
   char buffer[20];
   cm = HC_read();
-  a = requirement(cm);
-  sprintf(buffer,"%f %d %d\n",cm, a, empty);
+  vehicle_detect();
+  sprintf(buffer,"%d %d %d\n",((int) cm), count, empty);
   httpRequest = String(buffer);
   clientDemo();
   delay(2000);

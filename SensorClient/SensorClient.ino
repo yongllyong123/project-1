@@ -40,6 +40,7 @@ unsigned long t1;
 unsigned long t2;
 unsigned long pulse_width;
 float cm;
+int a;
 
 // sensor requirement function:
 boolean requirement( float centimeters ) {
@@ -74,11 +75,7 @@ float HC_read(void) {
 
   // Print out results
   if ( pulse_width > MAX_DIST ) {
-//    Serial.print("1 Out of range          ");
   } else {
-//    Serial.print("sensor1: ");
-//    Serial.print(centimeters);
-//    Serial.println(" cm \t");
   }
 
   return centimeters;
@@ -89,30 +86,31 @@ String vehicle_detect() {
 if( empty == 1 ) { //parking spot is not used
     if( requirement( cm ) == 1 ) {// meeting the requirement
       count++;//计数
-      if( count == 11 ) {
-        return " the car is arrived ";//send a signal for parking
+      if( count == 6 ) {
         count = 0;
-        empty = 0; //parking spot is used
+        empty = 0;
+        return "the car is arrived ";//send a signal for parking
+         //parking spot is used
       } else {
-       return " the car is not arrived yet (has detected) ";
+       return "the car is not arrived yet (has detected) ";
       }
     } else {
       count = 0;
-      return " the car is not arrived yet ";
+      return "the car is not arrived yet ";
     }
   } else { //parking spot is used
     if ( requirement( cm ) == 0 ) {
       count++;
       if( count == 6){
-        return " the car is leaving ";//send a signal for removing
         count = 0;
         empty = 1;
+        return "the car is leaving ";//send a signal for removing
       } else {
-        return " the car is not leaving yet (has detected) ";
+        return "the car is not leaving yet (has detected) ";
       }
     } else {
       count = 0;
-      return " the car is not leaving yet ";
+      return "the car is not leaving yet ";
     }
   }
 }
@@ -139,18 +137,14 @@ char myMacAddr[20];
 //////////////////
 // HTTP Strings //
 //////////////////
-const char destServer[] = "192.168.1.91";
+const char destServer[] = "10.105.128.210";
 const String htmlHeader = "HTTP/1.1 200 OK\r\n"
                           "Content-Type: text/html\r\n"
                           "Connection: close\r\n\r\n"
                           "<!DOCTYPE HTML>\r\n"
                           "<html>\r\n";
 
-//const String httpRequest = "GET / HTTP/1.1\n"
-//                           "Host: 192.168.1.91\n"
-//                           "Connection: close\n\n";
-
-const String httpRequest = "( ͡° ͜ʖ ͡°)\n";
+String httpRequest = "( ͡° ͜ʖ ͡°)\n";
 
 // All functions called from setup() are defined below the
 // loop() function. They modularized to make it easier to
@@ -166,6 +160,7 @@ void setup()
   digitalWrite(TRIG_PIN1, LOW);
 
   cm = 0;
+  a = 0;
   
 //  serialTrigger(F("Press any key to begin."));
   delay(1000);
@@ -201,9 +196,13 @@ void setup()
 
 void loop()
 {
-//  cm = HC_read();
+  char buffer[20];
+  cm = HC_read();
+  a = requirement(cm);
+  sprintf(buffer,"%f %d %d\n",cm, a, empty);
+  httpRequest = String(buffer);
   clientDemo();
-  delay(1000);
+  delay(2000);
 }
 
 void initializeESP8266()

@@ -1,67 +1,121 @@
-package com.example.daniel.carsensor;
+// reference:
+// http://android-er.blogspot.com/2014/02/android-sercerclient-example-client.htmlpackage com.example.daniel.carsensor;
 
-import android.support.v7.app.AppCompatActivity;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
-
+import android.app.Activity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+public class MainActivity extends Activity {
 
-import java.io.IOException;
-
-public class MainActivity extends AppCompatActivity {
-
-    private Button getBtn;
-    private TextView result;
+    TextView textResponse;
+    EditText editTextAddress, editTextPort;
+    Button buttonConnect, buttonClear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        result = (TextView) findViewById(R.id.result);
-        getBtn = (Button) findViewById(R.id.getBtn);
-        getBtn.setOnClickListener(new View.OnClickListener() {
+
+        editTextAddress = (EditText)findViewById(R.id.address);
+        editTextPort = (EditText)findViewById(R.id.port);
+        buttonConnect = (Button)findViewById(R.id.connect);
+        buttonClear = (Button)findViewById(R.id.clear);
+        textResponse = (TextView)findViewById(R.id.response);
+
+        buttonConnect.setOnClickListener(buttonConnectOnClickListener);
+
+        buttonClear.setOnClickListener(new OnClickListener(){
+
             @Override
-            public void onClick(View view) {
-                getWebsite();
-            }
-        });
+            public void onClick(View v) {
+                textResponse.setText("");
+            }});
     }
 
-    private void getWebsite() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final StringBuilder builder = new StringBuilder();
+    OnClickListener buttonConnectOnClickListener =
+            new OnClickListener(){
 
-                try {
-//                    Document doc = Jsoup.connect("http://www.ssaurel.com/blog").get();
-                    Document doc = Jsoup.connect("http://10.106.19.249").get();
-                    String title = doc.title();
-                    Elements links = doc.select("body");
+                @Override
+                public void onClick(View arg0) {
+                    MyClientTask myClientTask = new MyClientTask(
+                            editTextAddress.getText().toString(),
+                            Integer.parseInt(editTextPort.getText().toString()));
+                    myClientTask.execute();
+                }};
 
-                    builder.append(title).append("\n");
+    public class MyClientTask extends AsyncTask<Void, Void, Void> {
 
-                    for (Element link : links) {
-                        builder.append("\n").append("Link : ").append(link.attr("href"))
-                                .append("\n").append("Text : ").append(link.text());
-                    }
-                } catch (IOException e) {
-                    builder.append("Error : ").append(e.getMessage()).append("\n");
+        String dstAddress;
+        int dstPort;
+        String response = "";
+
+        MyClientTask(String addr, int port){
+            dstAddress = addr;
+            dstPort = port;
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+
+            Socket socket = null;
+
+            try {
+                socket = new Socket(dstAddress, dstPort);
+
+                ByteArrayOutputStream byteArrayOutputStream =
+                        new ByteArrayOutputStream(1024);
+                byte[] buffer = new byte[1024];
+
+                int bytesRead;
+                InputStream inputStream = socket.getInputStream();
+
+    /*
+     * notice:
+     * inputStream.read() will block if no data return
+     */
+                while ((bytesRead = inputStream.read(buffer)) != -1){
+                    byteArrayOutputStream.write(buffer, 0, bytesRead);
+                    response += byteArrayOutputStream.toString("UTF-8");
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        result.setText(builder.toString());
+            } catch (UnknownHostException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                response = "UnknownHostException: " + e.toString();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                response = "IOException: " + e.toString();
+            }finally{
+                if(socket != null){
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
-                });
+                }
             }
-        }).start();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            textResponse.setText(response);
+            super.onPostExecute(result);
+        }
+
     }
+
 }

@@ -49,9 +49,6 @@ function callback_server_connection(socket){
     });
 }
 
-console.log("http://android-er.blogspot.com/");
-console.log("http://helloraspberrypi.blogspot.com/");
-
 console.log("node.js net server is waiting:");
 for (var interface in networkInterfaces) {
 

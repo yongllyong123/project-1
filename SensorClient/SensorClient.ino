@@ -194,10 +194,10 @@ void setup()
 void loop()
 {
   char buffer[20];
-  cm = HC_read();
-  vehicle_detect();
-  sprintf(buffer,"%d %d %d\n",((int) cm), count, empty);
-  httpRequest = String(buffer);
+//  cm = HC_read();
+//  vehicle_detect();
+//  sprintf(buffer,"%d %d %d\n",((int) cm), count, empty);
+//  httpRequest = String(buffer);
   clientDemo();
   delay(2000);
 }

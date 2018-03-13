@@ -1,5 +1,6 @@
 // reference:
 // http://android-er.blogspot.com/2014/02/android-sercerclient-example-client.htmlpackage com.example.daniel.carsensor;
+package com.example.daniel.carsensor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

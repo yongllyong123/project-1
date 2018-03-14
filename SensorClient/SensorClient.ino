@@ -31,16 +31,22 @@ Distributed as-is; no warranty is given.
 //////////////////////////////
 // HC-SR04 Settings //////////
 //////////////////////////////
-const int TRIG_PIN1 = 6;
-const int ECHO_PIN1 = 7;
+const int TRIG_PIN1 = 4;
+const int ECHO_PIN1 = 5;
+const int TRIG_PIN2 = 6;
+const int ECHO_PIN2 = 7;
 const unsigned int MAX_DIST = 23200; // Anything over 400 cm (23200 us pulse) is "out of range"
 int count=0; // 计数
 int empty=1; //判断车位为空
 unsigned long t1;
 unsigned long t2;
-unsigned long pulse_width;
-float cm;
-int a;
+unsigned long pulse_width_1;
+unsigned long t3;
+unsigned long t4;
+unsigned long pulse_width_2;
+float cm_1 = 0;
+float cm_2 = 0;
+int a_1, a_2;
 
 // sensor requirement function:
 boolean requirement( float centimeters ) {
@@ -51,8 +57,8 @@ boolean requirement( float centimeters ) {
   }
 }
 
-// HC-SR04 read:
-float HC_read(void) {
+// HC-SR04 #1 read:
+float HC_1_read(void) {
   float centimeters = 0;
   // Hold the trigger pin high for at least 10 us
   digitalWrite(TRIG_PIN1, HIGH);
@@ -66,50 +72,49 @@ float HC_read(void) {
   t1 = micros();
   while ( digitalRead(ECHO_PIN1) == 1);
   t2 = micros();
-  pulse_width = t2 - t1;
+  pulse_width_1 = t2 - t1;
 
   // Calculate distance in centimeters and inches. The constants
   // are found in the datasheet, and calculated from the assumed speed
   //of sound in air at sea level (~340 m/s).
-  centimeters = pulse_width / 58.0;
+  centimeters = pulse_width_1 / 58.0;
 
   // Print out results
-  if ( pulse_width > MAX_DIST ) {
+  if ( pulse_width_1 > MAX_DIST ) {
   } else {
   }
 
   return centimeters;
 }
 
-// Vehicle detection algorithm:
-void vehicle_detect() {
-if( empty == 1 ) { //parking spot is not used
-    if( requirement( cm ) == 1 ) {// meeting the requirement
-      count++;//计数
-      if( count == 6 ) {
-        count = 0;
-        empty = 0; // parking spot in use
-      } else {
-       empty = 1;
-      }
-    } else {
-      count = 0;
-      empty = 1;
-    }
-  } else { //parking spot is used
-    if ( requirement( cm ) == 0 ) {
-      count++;
-      if( count == 6){
-        count = 0;
-        empty = 1;
-      } else {
-        empty = 0;
-      }
-    } else {
-      count = 0;
-      empty = 0;
-    }
+// HC-SR04 #2 read:
+float HC_2_read(void) {
+  float centimeters = 0;
+  // Hold the trigger pin high for at least 10 us
+  digitalWrite(TRIG_PIN2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN2, LOW);
+
+  // Wait for pulse on echo pin
+  while ( digitalRead(ECHO_PIN2) == 0 );
+  // Measure how long the echo pin was held high (pulse width)
+  // Note: the micros() counter will overflow after ~70 min
+  t3 = micros();
+  while ( digitalRead(ECHO_PIN2) == 1);
+  t4 = micros();
+  pulse_width_2 = t4 - t3;
+
+  // Calculate distance in centimeters and inches. The constants
+  // are found in the datasheet, and calculated from the assumed speed
+  //of sound in air at sea level (~340 m/s).
+  centimeters = pulse_width_2 / 58.0;
+
+  // Print out results
+  if ( pulse_width_2 > MAX_DIST ) {
+  } else {
   }
+
+  return centimeters;
 }
 
 //////////////////////////////
@@ -155,9 +160,13 @@ void setup()
   // HC-SR04 setup:
   pinMode(TRIG_PIN1, OUTPUT);
   digitalWrite(TRIG_PIN1, LOW);
+  pinMode(TRIG_PIN2, OUTPUT);
+  digitalWrite(TRIG_PIN2, LOW);
 
-  cm = 0;
-  a = 0;
+  cm_1 = 0;
+  cm_2 = 0;
+  a_1 = 0;
+  a_2 = 0;
   
 //  serialTrigger(F("Press any key to begin."));
   delay(1000);
@@ -194,10 +203,12 @@ void setup()
 void loop()
 {
   char buffer[20];
-//  cm = HC_read();
-//  vehicle_detect();
-//  sprintf(buffer,"%d %d %d\n",((int) cm), count, empty);
-//  httpRequest = String(buffer);
+  cm_1 = HC_1_read();
+  cm_2 = HC_2_read();
+  a_1 = requirement(cm_1);
+  a_2 = requirement(cm_2);
+  sprintf(buffer,"%d %d\n",a_1, a_2);
+  httpRequest = String(buffer);
   clientDemo();
   delay(2000);
 }
@@ -363,7 +374,7 @@ void serverDemo()
 //          cm = HC_read();
           
           htmlBody += "cm: ";
-          htmlBody += String(cm);
+          htmlBody += String(cm_1);
           htmlBody += "<br>\n";
           //htmlBody += "empty: ";
           //htmlBody += vehicle_detect();

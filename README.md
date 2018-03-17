@@ -9,9 +9,11 @@ Yong Zhao & Dan Lynch
 1. [SensorClient.ino](/SensorClient/SensorClient.ino):
 
   Arduino code that interfaces with HC-SR04 sensors and ESP8266 WiFi adapter to send info to server
+
 2. [TCPserver.js](/NodeJS/TCPserver.js):
 
   Node.js script that implements a server on my laptop
+  
 3. [CarSensor](/CarSensor):
 
   Android app that communicates with server

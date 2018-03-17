@@ -4,6 +4,9 @@ Internet-of-Things application for smart curbside parking
 ## Team Members:
 Yong Zhao & Dan Lynch
 
+## Video
+[Here](https://drive.google.com/open?id=10gCUmPxxRAiL0CyJT1cxcISW5HzXR3Ov) is a video presenting our project for Northwestern University's Winter 2018 EECS 395/495 Cyberphysical Systems course.
+
 ## Relevant Software
 
 1. [SensorClient.ino](/SensorClient/SensorClient.ino):
@@ -13,7 +16,7 @@ Yong Zhao & Dan Lynch
 2. [TCPserver.js](/NodeJS/TCPserver.js):
 
   Node.js script that implements a server on my laptop
-  
+
 3. [CarSensor](/CarSensor):
 
   Android app that communicates with server

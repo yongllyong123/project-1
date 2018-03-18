@@ -1,36 +1,54 @@
 \relax 
-\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {I-A}}Use Case}{1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {I-B}}Modular System Design}{1}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Block diagram of components used in our \texttt  {CarSensor} prototype.}}{1}}
-\newlabel{fig_blockdiagram}{{1}{1}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Physical layout of networked sensors used in \texttt  {CarSensor}.}}{1}}
-\newlabel{fig_curb}{{2}{1}}
-\@writefile{toc}{\contentsline {section}{\numberline {II}Physical Layer}{1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-A}}Arduino UNO microcontroller}{1}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Arduino UNO (image credit: Arduino)}}{2}}
-\newlabel{fig_arduinoUNO}{{3}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-B}}HC-SR04 ultrasonic distance sensor}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces HC-SR04 ultrasonic distance sensor (image credit: SparkFun Electronics \textsuperscript  {\textregistered })}}{2}}
-\newlabel{fig_hcsr04}{{4}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-C}}ESP8266 WiFi adapter}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces SparkFun ESP8266 WiFi shield for Arduino UNO (image credit: SparkFun Electronics \textsuperscript  {\textregistered })}}{2}}
-\newlabel{fig_esp8266}{{5}{2}}
-\@writefile{toc}{\contentsline {section}{\numberline {III}Network Layer}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-A}}Sensor clients}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Server}{2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}1}TCP sockets}{2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}2}State machine}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Finite state machine for vehicle detection}}{3}}
-\newlabel{fig_fsm}{{6}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-C}}Smartphone app client}{3}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Screenshot of the \texttt  {CarSensor} Android app}}{3}}
-\newlabel{fig_app}{{7}{3}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Future Work}{3}}
-\newlabel{sec_futurework}{{IV}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-A}}Ease of use}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-B}}Extensibility}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-C}}Robustness}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-D}}Power}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-E}}Security}{3}}
-\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusion}{3}}
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}}
+\newlabel{sec_intro}{{I}{1}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {I-A}}Motivation}{1}{subsection.1.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {I-B}}Modular System Design}{1}{subsection.1.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Block diagram of components used in our \texttt  {CarSensor} prototype.}}{1}{figure.1}}
+\newlabel{fig_blockdiagram}{{1}{1}{Block diagram of components used in our \texttt {CarSensor} prototype}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Physical layout of networked sensors used in \texttt  {CarSensor}.}}{1}{figure.2}}
+\newlabel{fig_curb}{{2}{1}{Physical layout of networked sensors used in \texttt {CarSensor}}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Physical Layer}{1}{section.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-A}}Arduino UNO microcontroller}{2}{subsection.2.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Arduino UNO (image credit: Arduino)}}{2}{figure.3}}
+\newlabel{fig_arduinoUNO}{{3}{2}{Arduino UNO (image credit: Arduino)}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-B}}HC-SR04 ultrasonic distance sensor}{2}{subsection.2.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces HC-SR04 ultrasonic distance sensor (image credit: SparkFun Electronics \textsuperscript  {\textregistered })}}{2}{figure.4}}
+\newlabel{fig_hcsr04}{{4}{2}{HC-SR04 ultrasonic distance sensor (image credit: SparkFun Electronics \textsuperscript {\textregistered })}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {II-C}}ESP8266 WiFi adapter}{2}{subsection.2.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces SparkFun ESP8266 WiFi shield for Arduino UNO (image credit: SparkFun Electronics \textsuperscript  {\textregistered })}}{2}{figure.5}}
+\newlabel{fig_esp8266}{{5}{2}{SparkFun ESP8266 WiFi shield for Arduino UNO (image credit: SparkFun Electronics \textsuperscript {\textregistered })}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Network Layer}{2}{section.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-A}}Sensor clients}{2}{subsection.3.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Server}{2}{subsection.3.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}1}TCP sockets}{2}{subsubsection.3.2.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}2}State machine}{3}{subsubsection.3.2.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Finite state machine for vehicle detection}}{3}{figure.6}}
+\newlabel{fig_fsm}{{6}{3}{Finite state machine for vehicle detection}{figure.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-C}}Smartphone app client}{3}{subsection.3.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Screenshot of the \texttt  {CarSensor} Android app}}{3}{figure.7}}
+\newlabel{fig_app}{{7}{3}{Screenshot of the \texttt {CarSensor} Android app}{figure.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Future Work}{3}{section.4}}
+\newlabel{sec_futurework}{{IV}{3}{Future Work}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-A}}Ease of use}{3}{subsection.4.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-B}}Extensibility}{3}{subsection.4.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-C}}Robustness}{3}{subsection.4.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-D}}Power}{4}{subsection.4.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-E}}Security}{4}{subsection.4.5}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusion}{4}{section.5}}

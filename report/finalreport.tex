@@ -1,12 +1,14 @@
 \documentclass[conference]{IEEEtran}
 \usepackage[pdftex]{graphicx}
-\usepackage{url}
+\usepackage{hyperref}
+\usepackage{float}
 \graphicspath{{images/}}
 \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
 
+\begin{document}
 \hyphenation{op-tical net-works semi-conduc-tor}
 
-\begin{document}
+\urlstyle{tt}
 
 \title{CarSensor: Smart Street-side Parking with the Internet of Things}
 
@@ -28,15 +30,14 @@
 \maketitle
 
 \begin{abstract}
-	The abstract goes here.
-	No, it goes here.
+We propose \texttt{CarSensor}, a networked array of sensors that provide parking information to users via a smartphone app. The design is guided by a desire for simplicity and modularity, two important attributes of Internet-of-Things systems and of cyberphysical systems in general. We describe our proof-of-concept prototype, built using popular open-source hardware and software. Based on this prototype, we then identify areas for further development that constitute prerequisites for full-scale implementation.
 \end{abstract}
 
-\section{Introduction}
-The recent surge in popularity of the Internet of Things (IoT) highlights some fundamental aspects of the design and analysis of cyberphysical systems, such as deterministic behavior, robustness, and extensibility. For the final project of EECS 395/495 Cyberphysical Systems (Winter 2018), we created \texttt{CarSensor}\footnote{\url{https://github.com/yongllyong123/project-1}}, a prototype of an IoT-inspired system for smarter street-side parking, which addressed these aforementioned aspects of cyberphysical systems.
+\section{Introduction}\label{sec_intro}
+The recent surge in popularity of the Internet of Things (IoT) highlights some fundamental aspects of the design and analysis of cyberphysical systems, such as deterministic behavior, robustness, and extensibility. For the final project of EECS 395/495 Cyberphysical Systems (Winter 2018), we created \texttt{CarSensor} \footnote{\url{https://github.com/yongllyong123/project-1}}, a prototype of an IoT-inspired system for smarter street-side parking, which addressed these aforementioned aspects of cyberphysical systems.
 
-\subsection{Use Case}
-Parking on the street can be a hassle, especially in urban areas. Knowing which parking spaces are full or empty can save a lot of time and aggravation. One way to realize this is by outfitting a street with an IoT system consisting of networked sensors and a client application all communicating with a central hub.
+\subsection{Motivation}
+Street parking can be a hassle, especially in urban areas. Knowing which parking spaces are full or empty can save a lot of time and aggravation. One way to realize this is by outfitting a street with an IoT system consisting of networked sensors and a client application all communicating with a central hub.
 
 \subsection{Modular System Design}
 \texttt{CarSensor} is intended to modular, so that it can be expanded to support an arbitrary number of parking spaces. As shown in Figure~\ref{fig_blockdiagram}, \texttt{CarSensor} consists of three types of components:
@@ -105,7 +106,7 @@ After selecting our microcontroller, we needed to select a compatible WiFi adapt
 \subsection{Sensor clients}
 Using the ESP8266 in TCP client mode, each Arduino UNO sends proximity information from both HC-SR04 sensors to the server at 0.5 Hz.
 \subsection{Server}
-We used \texttt{Node.js}\textsuperscript{\textregistered}\footnote{\url{https://nodejs.org/en/}} to develop a rudimentary server to collect data from each sensor module and handle requests from the smartphone app. specifically, we used the \texttt{net}\footnote{\url{https://nodejs.org/api/net.html#net_net}} module to create an asynchronous streaming TCP server with that listens for requests on two ports (one for sensor modules, another for the smartphone app).
+We used \texttt{Node.js}\textsuperscript{\textregistered} \footnote{\url{https://nodejs.org/en/}} to develop a rudimentary server to collect data from each sensor module and handle requests from the smartphone app. Specifically, we used the \texttt{net}\footnote{\url{https://nodejs.org/api/net.html\#net_net}} module to create an asynchronous streaming TCP server with that listens for requests on two ports (one for sensor modules, another for the smartphone app). In our prototype, we ran the server on a Lenovo laptop running Ubuntu 14.04 LTS.
 \subsubsection{TCP sockets}
 Sensor modules communicate with the server on port 8080, and the smartphone app communicates with the server on port 8000. This decision was motivated by the need for a modular system; moreover, it simplifies the server design because TCP requests from the smartphone app do not need to be filtered out from sensor modules' TCP requests.
 \subsubsection{State machine}
@@ -123,22 +124,47 @@ The core of \texttt{CarSensor} is a simple finite state machine (FSM) running on
 	\label{fig_fsm}
 \end{figure}
 
-A change in the \texttt{proximity} bits that correspond to a parking space triggers a transition from \texttt{empty} or \texttt{full} to one of the ``pending'' states. The FSM then uses a counter to determine when to transition from a ``pending'' state to \texttt{full} or \texttt{empty}. If the change persists until \texttt{count} reaches a \texttt{threshold} value, the state transitions; otherwise, it reverts to the state before the ``pending'' state.
+A change in the two \texttt{proximity} bits that correspond to a parking space triggers a transition from \texttt{empty} or \texttt{full} to one of the ``pending'' states. The FSM then uses a counter to determine when to transition from a ``pending'' state to \texttt{full} or \texttt{empty}. If the change persists until \texttt{count} reaches a \texttt{threshold} value, the state transitions; otherwise, it reverts to the state before the ``pending'' state. Using a counter and a threshold filters out high-frequency events (e.g., pedestrians walking through parking spaces) and preserves low-frequency information (the presence/absence of a vehicle in the parking space). In this sense, \texttt{CarSensor}'s FSM is functionally equivalent to a \textit{switch debouncer}.
 
-\texttt{count} increments at the same rate that the sensor module sends new \texttt{proximity} data, so \texttt{threshold} represents a time duration. In our prototype, the value of \texttt{threshold} is 5, corresponding to 10 seconds.
+Note that \texttt{count} increments at the rate at which the sensor module sends new \texttt{proximity} data, so \texttt{threshold} represents a time duration. In our prototype, the value of \texttt{threshold} is 5, corresponding to 10 seconds.
 \subsection{Smartphone app client}
+We elected to use Android Studio\footnote{\url{https://developer.android.com/studio/index.html}} to build the end user's interface with our \texttt{CarSensor} system. This decision was largely motivated by our familiarity with Android Studio and our unfamiliarity with developing iOS apps.
+
+The app, shown in Figure~\ref{fig_app}, is a simple TCP client that communicates with the server on port 8000. When the user presses ``CONNECT...'', the app sends a request to the server and the server replies with its estimate of the state of the parking space(s).
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=2.0in]{app.png}
 	\caption{Screenshot of the \texttt{CarSensor} Android app}
 	\label{fig_app}
 \end{figure}
+
+To ease the development process, we provided a field for the user to enter the server's IP address, because it changed depending on whether we were working on campus or at home.
+
 \section{Future Work}\label{sec_futurework}
+While developing our prototype, we identified many avenues for improvement. Some of these ideas were not implemented due to a lack of time, others due to a lack of technical experience.
 \subsection{Ease of use}
+In the prototype, the user has to click ``connect'' every time he/she wants to see the newest information about parking spaces. An automatic notification feature would enhance the user experience. More fundamentally, the prototype app requires the user to know where each parking space is, which is unreasonable. A better app would integrate a maps-type feature with the existing notification system.
 \subsection{Extensibility}
+As alluded to in Section~\ref{sec_intro}, identifying each sensor module by IP address is a flawed approach for a couple reasons: first, IP address does not correlate with physical location, so the server cannot use IP addresses alone to reason about the state of each parking space; second, routers can only distribute a limited number of IP addresses. One option is to simply program each sensor module with an address upon installation, but this is labor-intensive and not very flexible. Programming each sensor module to transmit its ID along with its data also frees the server from having to know the IDs of all the sensor modules, thus making the system easier to expand.
 \subsection{Robustness}
+Recall that each sensor module transmits once every two seconds. This signal contains data (and could also contain an ID) but also functions like a heartbeat. The server simply needs to keep track of time since the last transmission from each sensor module. If ``too much'' time has elapsed since a particular module's last transmission, the server can advise a maintainer to check on that module.
 \subsection{Power}
+We offer two suggestions for improved power efficiency. We considered using solar power for our project but quickly decided against it, due to unnecessary complexity and the short time frame alloted for the project. Solar power is problematic because of fluctuating and unpredictable power output, so a batter and both charging and discharging circuits are also necessary. Nevertheless, solar power could be useful in a full-scale implementation of our system.
+
+Our second recommendation is a low-power mode for the sensor modules. The ESP8266 draws up to 170 mA of current when transmitting. If the sensor module is running on a battery, a low-power mode with reduced transmission frequency (e.g., 0.05 Hz or even 0.005 Hz instead of 0.5 Hz) would extend battery life.
 \subsection{Security}
+We did not consider security risks when designing this prototype. There are two primary attack vectors: attacking the server through the app's port (port 8000) or through the sensor modules' port (port 8080). Neither of these require authentication in our prototype, so they are security risks. A third (albeit more difficult) attack vector is through the sensor module itself: since the ATmega328P can be reprogrammed, it can be hacked. Countermeasures that achieve immunity to hacking without sacrificing reprogrammability warrant further investigation.
 \section{Conclusion}
+We presented \texttt{CarSensor}, an IoT-inspired system for notifying drivers of empty and full parking spaces. The system is highly modular and consists of a physical layer and a network layer. We built a prototype using widely available open-source development tools, including the Arduino UNO, \texttt{Node.js}\textsuperscript{\textregistered}, and Android Studio. Our prototype demonstrated \texttt{CarSensor}'s viability and also illuminated a number of areas for improvement that are relevant to most cyberphysical systems.
+
+\section*{References}
+\begin{enumerate}
+\item SparkFun ESP8266 AT Arduino Library. \url{https://github.com/sparkfun/SparkFun_ESP8266_AT_Arduino_Library}
+\item \texttt{Node.js} main page. \url{https://nodejs.org/en/}
+\item \texttt{Node.js} \texttt{net} API documentation. \url{https://nodejs.org/api/net.html\#net_net}
+\item Android Studio main page. \url{https://developer.android.com/studio/index.html}
+
+\end{enumerate}
 
 \end{document}

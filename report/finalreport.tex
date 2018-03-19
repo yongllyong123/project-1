@@ -43,7 +43,7 @@ Street parking can be a hassle, especially in urban areas. Knowing which parking
 \texttt{CarSensor} is intended to be modular, so that it can be expanded to support an arbitrary number of parking spaces. As shown in Figure~\ref{fig_blockdiagram}, \texttt{CarSensor} consists of three components:
 \begin{itemize}
 \item an arbitrary number of \textit{sensor modules} located at parking spaces,
-\item a \textit{server} that collects data from the sensor modules and reasons about the state of each parking space, and
+\item a \textit{web server} that collects data from the sensor modules and reasons about the state of each parking space, and
 \item a \textit{smartphone app} that provides parking information to the end user.
 \end{itemize}
 
@@ -54,7 +54,7 @@ Street parking can be a hassle, especially in urban areas. Knowing which parking
 \label{fig_blockdiagram}
 \end{figure}
 
-Each sensor module consists of two sensors, a microcontroller, and a network adapter. Each module is responsible for sensing two adjacent parking spaces, as shown in Figure~\ref{fig_curb}. The parking space in the middle of the figure is sensed by module 1's sensor B and module 2's sensor A; the parking space on the right would be sensed by module 2's sensor B and module 3's sensor A, and so on.
+Each sensor module consists of two HC-SR04 sensors, an Arduino UNO microcontroller, and a WiFi adapter. Each module is responsible for sensing two adjacent parking spaces, as shown in Figure~\ref{fig_curb}. The parking space in the middle of the figure is sensed by module 1's sensor B and module 2's sensor A; the parking space on the right would be sensed by module 2's sensor B and module 3's sensor A, and so on.
 \begin{figure}[h]
 \centering
 \includegraphics[width=2.0in]{parkingspace.png}
@@ -87,7 +87,7 @@ Shown in Figure~\ref{fig_arduinoUNO}, the Arduino UNO is an open-source developm
 	\label{fig_hcsr04}
 \end{figure}
 
-The HC-SR04 sensor, pictured in Figure~\ref{fig_hcsr04}, has two communication pins: \texttt{TRIG} (a digital input) and \texttt{ECHO} (a digital output). Its operational principle is similar to sonar: when \texttt{TRIG} is toggled high, the sensor emits an ultrasonic pulse; if an object reflects the pulse back to the sensor, it sets \texttt{ECHO} high. The microcontroller simply times the delay between setting \texttt{TRIG} high and receiving a logical 1 on \texttt{ECHO} and multiplies that time by the speed of sound (343 m/s in air at sea level) to estimate how far away the object is.
+The HC-SR04 sensor, pictured in Figure~\ref{fig_hcsr04}, has two communication pins: \texttt{TRIG} (a digital input) and \texttt{ECHO} (a digital output). Its operational principle is similar to that of sonar: when \texttt{TRIG} is toggled high, the sensor emits an ultrasonic pulse; if an object reflects the pulse back to the sensor, it sets \texttt{ECHO} high. The microcontroller simply times the delay between setting \texttt{TRIG} high and receiving a logical 1 on \texttt{ECHO} and multiplies that time by the speed of sound (343 m/s in air at sea level) to estimate how far away the object is.
 
 \texttt{CarSensor} is more concerned with detecting the presence of a vehicle in a parking space than with measuring distance, so measurements made with the HC-SR04 are compared to a heuristic distance threshold. If the measured distance is less than the threshold, a \texttt{proximity} bit, specific to that sensor, is set to 1 and subsequently sent to the server via the WiFi adapter; otherwise, \texttt{proximity} is set to 0 and then sent to the server. Since each Arduino uses two HC-SR04 sensors, each Arduino sends two \texttt{proximity} bits to the server, delimited by a space. This transmission occurs at a regular frequency (0.5 Hz in our prototype) and will be expanded on in Section~\ref{sec_futurework}.
 
@@ -100,7 +100,7 @@ The HC-SR04 sensor, pictured in Figure~\ref{fig_hcsr04}, has two communication p
 	\label{fig_esp8266}
 \end{figure}
 
-After selecting our microcontroller, we needed to select a compatible WiFi adapter. We chose SparkFun's ESP8266 shield, pictured in Figure~\ref{fig_esp8266}, which is built around the ESP8266 system-on-a-chip (SoC) and provides TCP server and client functionality. It interfaces with the Arduino UNO over ``software serial,'' leaving the Arduino UNO's hardware serial port available for other communication uses (debugging via a terminal emulator, in our case). We used SparkFun's Arduino library and starter code\footnote{\url{https://github.com/sparkfun/SparkFun_ESP8266_AT_Arduino_Library}} to shorten the learning curve associated with using the ESP8266.
+After selecting our microcontroller, we needed to select a compatible WiFi adapter. We chose SparkFun's ESP8266 shield, pictured in Figure~\ref{fig_esp8266}, which is built around the ESP8266 system-on-a-chip (SoC) and provides Transmission Control Protocol (TCP) server and client functionality. It interfaces with the Arduino UNO over ``software serial,'' leaving the Arduino UNO's hardware serial port available for other communication uses (debugging via a terminal emulator, in our case). We used SparkFun's Arduino library and starter code\footnote{\url{https://github.com/sparkfun/SparkFun_ESP8266_AT_Arduino_Library}} to shorten the learning curve associated with using the ESP8266.
 
 \section{Network Layer}\label{sec_network}
 \subsection{Sensor clients}
@@ -150,13 +150,13 @@ As alluded to in Section~\ref{sec_intro}, identifying each sensor module by IP a
 \subsection{Robustness}
 Recall that each sensor module transmits once every two seconds. This signal contains data (and could also contain an ID) but also functions like a heartbeat, in that its absence indicates the module's failure. The server simply needs to keep track of time since the last transmission from each sensor module. If ``too much'' time has elapsed since a particular module's last transmission, the server can advise a maintainer to check on that module.
 \subsection{Power}
-We offer two suggestions for improved power efficiency. We considered using solar power for our project but quickly decided against it, due to unnecessary complexity and the short time frame alloted for the project. Solar power is problematic because of fluctuating and unpredictable power output, so a batter and both charging and discharging circuits are also necessary. Nevertheless, solar power could be useful in a full-scale implementation of our system.
+We offer two suggestions for improved power efficiency. We considered using solar power for our project but quickly decided against it, due to unnecessary complexity and the short time frame alloted for the project. Solar power is problematic because of fluctuating and unpredictable power output, so a battery and both charging and discharging circuits are also necessary. Nevertheless, solar power could be useful in a full-scale implementation of our system.
 
 Our second recommendation is a low-power mode for the sensor modules. The ESP8266 draws up to 170 mA of current when transmitting. If the sensor module is running on a battery, a low-power mode with reduced transmission frequency (e.g., 0.05 Hz or even 0.005 Hz instead of 0.5 Hz) would extend battery life.
 \subsection{Security}
 We did not consider security risks when designing this prototype. There are two primary attack vectors: attacking the server through the app's port (port 8000) or through the sensor modules' port (port 8080). Neither of these requires authentication in our prototype, so they are security risks. A third (albeit more difficult) attack vector is through the sensor module itself: since the ATmega328P can be reprogrammed, it can be hacked. Countermeasures that achieve immunity to hacking without sacrificing reprogrammability warrant further investigation.
 \section{Conclusion}\label{sec_conc}
-We presented \texttt{CarSensor}, an IoT-inspired system for notifying drivers of the occupancy statuses of nearby parking spaces. The system is highly modular and consists of a physical layer and a network layer. We built a prototype using widely available open-source development tools, including the Arduino UNO, \texttt{Node.js}\textsuperscript{\textregistered}, and Android Studio. Our prototype demonstrated \texttt{CarSensor}'s viability and also illuminated a number of areas for improvement that are relevant to most cyberphysical systems.
+We presented \texttt{CarSensor}, an IoT-inspired system for notifying drivers of the occupancy status of nearby parking spaces. The system is highly modular and consists of a physical layer and a network layer. We built a prototype using widely available open-source development tools, including the Arduino UNO, \texttt{Node.js}\textsuperscript{\textregistered}, and Android Studio. Our prototype demonstrated \texttt{CarSensor}'s viability and also illuminated a number of areas for improvement that are relevant to most cyberphysical systems.
 
 \section*{References}
 \begin{enumerate}
